@@ -105,7 +105,6 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
         data_dicts.append({
             "A": os.path.join(root_dir, row["img_path_A"].strip()),
             "B": os.path.join(root_dir, row["img_path_B"].strip()),
-            "subject_id": row["subject ID"]
         })
 
     # 2. STAGE 1: Deterministic Transforms (Cached)

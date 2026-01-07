@@ -1,9 +1,9 @@
-train_csv_path: '/home/huutien/5_folds_split_3D/fold_1_train.csv'
-val_csv_path: '/home/huutien/5_folds_split_3D/fold_1_val.csv'
-data_dir: '/home/huutien/filter_ds'
+train_csv_path: '/home/user01/aiotlab/htien/5_folds_split_3D/fold_1_train.csv'
+val_csv_path: '/home/user01/aiotlab/htien/5_folds_split_3D/fold_1_val.csv'
+data_dir: '/home/user01/aiotlab/htien/Custom_LBM/data/filter_ds'
 
 
-project_name: "LBM"
+project_name: "fix_bug"
 run_name : "3D_training_LBM" 
 save_dir : "/home/huutien/sources/GenerativeModels/3D_training/results"
 
@@ -11,7 +11,7 @@ pretrained_unet_path: "/home/huutien/sources/GenerativeModels/large_files/diffus
 vae_path: "/home/huutien/sources/GenerativeModels/3D_training/results/3D_training_KL_20251229_101810/best_checkpoint.pth"
 
 n_epochs : 100
-batch_size : 2
+batch_size : 1
 accumulate_grad_batches: 4 # tuning 
 num_workers : 4
 cache_rate : 1.0

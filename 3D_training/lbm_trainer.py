@@ -5,6 +5,13 @@ import torch
 import numpy as np
 from diffusers import FlowMatchEulerDiscreteScheduler
 
+
+import debugpy
+debugpy.listen(5678)
+print("Waiting for debugger to attach...")
+debugpy.wait_for_client()
+print("Debugger attached")
+
 class LBMTrainer(Trainer):
     def __init__(self, cfg: omegaconf.DictConfig):
         super().__init__(cfg)
@@ -12,13 +19,23 @@ class LBMTrainer(Trainer):
         self.source_key = "A"
         self.target_key = "B"
         self.latent_loss_type = cfg.lbm.latent_loss_type
+        self.latent_loss_weight = cfg.lbm.latent_loss_weight
         self.pixel_loss_type = cfg.lbm.pixel_loss_type
         self.pixel_loss_weight = cfg.lbm.pixel_loss_weight
         self.timestep_sampling = cfg.lbm.timestep_sampling
         self.logit_mean = cfg.lbm.logit_mean
         self.logit_std = cfg.lbm.logit_std
-        self.prob = cfg.lbm.prob
-        self.selected_timesteps = cfg.lbm.selected_timesteps
+        # Ensure list types (OmegaConf ListConfig -> python list) for custom_timesteps
+        self.prob = (
+            list(cfg.lbm.prob)
+            if isinstance(cfg.lbm.prob, omegaconf.ListConfig)
+            else cfg.lbm.prob
+        )
+        self.selected_timesteps = (
+            list(cfg.lbm.selected_timesteps)
+            if isinstance(cfg.lbm.selected_timesteps, omegaconf.ListConfig)
+            else cfg.lbm.selected_timesteps
+        )
         self.bridge_noise_sigma = cfg.lbm.bridge_noise_sigma
 
         if self.timestep_sampling == "log_normal":
@@ -27,6 +44,7 @@ class LBMTrainer(Trainer):
             ), "logit_mean and logit_std should be float for log_normal timestep sampling"
 
         if self.timestep_sampling == "custom_timesteps":
+            print(self.selected_timesteps, self.prob)
             assert isinstance(self.selected_timesteps, list) and isinstance(
                 self.prob, list
             ), "timesteps and prob should be list for custom_timesteps timestep sampling"
@@ -41,7 +59,7 @@ class LBMTrainer(Trainer):
             "stabilityai/stable-diffusion-xl-base-1.0",
             subfolder="scheduler",
         )
-        self.sampling_noise_scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
+        self.training_noise_scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
             "stabilityai/stable-diffusion-xl-base-1.0",
             subfolder="scheduler",
         )
@@ -75,7 +93,7 @@ class LBMTrainer(Trainer):
 
         # Create interpolant
         sigmas = self._get_sigmas(
-            self.training_noise_scheduler, timestep, n_dim=4, device=z.device
+            self.training_noise_scheduler, timestep, n_dim=len(z.shape), dtype=z.dtype, device=z.device
         ) # TODO check sigmas
         noisy_sample = (
             sigmas * z_source
@@ -91,7 +109,7 @@ class LBMTrainer(Trainer):
 
         prediction = self.unet(
             noisy_sample,
-            timestep=timestep,
+            timesteps=timestep,
             context=conditioning,
         )
 
@@ -130,11 +148,11 @@ class LBMTrainer(Trainer):
         # log loss to wandb
         if stage == 'train':
             self.wandb_run.log({
-                "step/train_loss": loss.item(),
+                "step/train_loss": loss.mean().item(),
                 "step/epoch": self.global_epoch,
                 "step/step": self.global_step,
-                "step/latent_recon_loss": latent_recon_loss.item(),
-                "step/pixel_recon_loss": pixel_loss.item(),
+                "step/latent_recon_loss": latent_recon_loss.mean().item(),
+                "step/pixel_recon_loss": pixel_loss.mean().item(),
             })
 
         return loss.mean()
@@ -205,7 +223,7 @@ class LBMTrainer(Trainer):
         """
         
         batch_size = batch[self.target_key].shape[0]
-        conditioning = torch.zeros(batch_size, 1, 4).to(self.device)
+        conditioning = torch.zeros(batch_size, 1, 4).to(self.device, dtype=self.dtype)
         return conditioning
 
     def _timestep_sampling(self, n_samples=1, device="cpu"):

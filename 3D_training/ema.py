@@ -26,14 +26,14 @@ class EMA:
                     new_average = (1.0 - self.ema_decay) * param.data + self.ema_decay * self.shadow[name]
                 else:
                     new_average = param.data
-                self.shadow[name] = new_average.clone()
+                self.shadow[name] = new_average.clone().to(param.data.dtype)
 
     def apply_shadow(self, current_model: nn.Module):
         for name, param in current_model.named_parameters():
             if param.requires_grad:
                 assert name in self.shadow
                 self.backup[name] = param.data
-                param.data = self.shadow[name]
+                param.data = self.shadow[name].to(device=param.data.device, dtype=param.data.dtype)
 
     def restore(self, current_model: nn.Module):
         for name, param in current_model.named_parameters():

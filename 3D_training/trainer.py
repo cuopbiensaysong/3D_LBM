@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,2"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0,2"
 
 from tqdm.autonotebook import tqdm
 
@@ -51,8 +51,8 @@ class Trainer():
         self.vae.to(self.device, dtype=self.dtype)
 
         # data loader
-        self.train_loader = get_i2i_3D_dataloader(cfg.train_csv_path ,stage="train", batch_size=cfg.batch_size, num_workers=cfg.num_workers, cache_rate=cfg.cache_rate)
-        self.val_loader = get_i2i_3D_dataloader(cfg.val_csv_path ,stage="val", batch_size=cfg.batch_size, num_workers=cfg.num_workers, cache_rate=cfg.cache_rate)
+        self.train_loader = get_i2i_3D_dataloader(cfg.train_csv_path, root_dir=cfg.data_dir, stage="train", batch_size=cfg.batch_size, num_workers=cfg.num_workers, cache_rate=cfg.cache_rate)
+        self.val_loader = get_i2i_3D_dataloader(cfg.val_csv_path, root_dir=cfg.data_dir, stage="val", batch_size=cfg.batch_size, num_workers=cfg.num_workers, cache_rate=cfg.cache_rate)
 
 
 
@@ -140,7 +140,7 @@ class Trainer():
                     torch.cuda.empty_cache()
                     print("validating epoch success")
                     self.wandb_run.log({
-                        "epoch/val_loss": average_loss,
+                        "epoch/val_loss": float(average_loss),
                     })
             # save best checkpoint based on validation loss
             if average_loss < best_val_loss:
@@ -157,13 +157,12 @@ class Trainer():
 
         pbar = tqdm(self.val_loader, total=len(self.val_loader), smoothing=0.01)
         step = 0
-        loss_sum = 0.
+        loss_sum = 0.0
         for val_batch in pbar:
-            loss = self.loss_fn(
-                                batch=val_batch,
-                                epoch=epoch,
-                                stage='val',)
-            loss_sum += loss
+            loss = self.loss_fn(batch=val_batch,stage='val')
+            # wandb cannot serialize MetaTensor; accumulate as plain python float
+            loss_val = loss.item() if hasattr(loss, "item") else float(loss)
+            loss_sum += loss_val
             step += 1
         average_loss = loss_sum / step
         self.restore_ema()
