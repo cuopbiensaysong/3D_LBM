@@ -1,0 +1,350 @@
+DiffusionModelUNet(
+  (conv_in): Convolution(
+    (conv): Conv3d(3, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+  )
+  (time_embed): Sequential(
+    (0): Linear(in_features=256, out_features=1024, bias=True)
+    (1): SiLU()
+    (2): Linear(in_features=1024, out_features=1024, bias=True)
+  )
+  (down_blocks): ModuleList(
+    (0): DownBlock(
+      (resnets): ModuleList(
+        (0-1): 2 x ResnetBlock(
+          (norm1): GroupNorm(32, 256, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=256, bias=True)
+          (norm2): GroupNorm(32, 256, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Identity()
+        )
+      )
+      (downsampler): ResnetBlock(
+        (norm1): GroupNorm(32, 256, eps=1e-06, affine=True)
+        (nonlinearity): SiLU()
+        (conv1): Convolution(
+          (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (downsample): Downsample(
+          (op): AvgPool3d(kernel_size=2, stride=2, padding=0)
+        )
+        (time_emb_proj): Linear(in_features=1024, out_features=256, bias=True)
+        (norm2): GroupNorm(32, 256, eps=1e-06, affine=True)
+        (conv2): Convolution(
+          (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (skip_connection): Identity()
+      )
+    )
+    (1): AttnDownBlock(
+      (attentions): ModuleList(
+        (0-1): 2 x AttentionBlock(
+          (norm): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (to_q): Linear(in_features=512, out_features=512, bias=True)
+          (to_k): Linear(in_features=512, out_features=512, bias=True)
+          (to_v): Linear(in_features=512, out_features=512, bias=True)
+          (proj_attn): Linear(in_features=512, out_features=512, bias=True)
+        )
+      )
+      (resnets): ModuleList(
+        (0): ResnetBlock(
+          (norm1): GroupNorm(32, 256, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(256, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+          (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(256, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (1): ResnetBlock(
+          (norm1): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+          (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Identity()
+        )
+      )
+      (downsampler): ResnetBlock(
+        (norm1): GroupNorm(32, 512, eps=1e-06, affine=True)
+        (nonlinearity): SiLU()
+        (conv1): Convolution(
+          (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (downsample): Downsample(
+          (op): AvgPool3d(kernel_size=2, stride=2, padding=0)
+        )
+        (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+        (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+        (conv2): Convolution(
+          (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (skip_connection): Identity()
+      )
+    )
+    (2): AttnDownBlock(
+      (attentions): ModuleList(
+        (0-1): 2 x AttentionBlock(
+          (norm): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (to_q): Linear(in_features=768, out_features=768, bias=True)
+          (to_k): Linear(in_features=768, out_features=768, bias=True)
+          (to_v): Linear(in_features=768, out_features=768, bias=True)
+          (proj_attn): Linear(in_features=768, out_features=768, bias=True)
+        )
+      )
+      (resnets): ModuleList(
+        (0): ResnetBlock(
+          (norm1): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(512, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+          (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(512, 768, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (1): ResnetBlock(
+          (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+          (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Identity()
+        )
+      )
+    )
+  )
+  (middle_block): AttnMidBlock(
+    (resnet_1): ResnetBlock(
+      (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+      (nonlinearity): SiLU()
+      (conv1): Convolution(
+        (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+      )
+      (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+      (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+      (conv2): Convolution(
+        (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+      )
+      (skip_connection): Identity()
+    )
+    (attention): AttentionBlock(
+      (norm): GroupNorm(32, 768, eps=1e-06, affine=True)
+      (to_q): Linear(in_features=768, out_features=768, bias=True)
+      (to_k): Linear(in_features=768, out_features=768, bias=True)
+      (to_v): Linear(in_features=768, out_features=768, bias=True)
+      (proj_attn): Linear(in_features=768, out_features=768, bias=True)
+    )
+    (resnet_2): ResnetBlock(
+      (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+      (nonlinearity): SiLU()
+      (conv1): Convolution(
+        (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+      )
+      (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+      (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+      (conv2): Convolution(
+        (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+      )
+      (skip_connection): Identity()
+    )
+  )
+  (up_blocks): ModuleList(
+    (0): AttnUpBlock(
+      (resnets): ModuleList(
+        (0-1): 2 x ResnetBlock(
+          (norm1): GroupNorm(32, 1536, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(1536, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+          (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(1536, 768, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (2): ResnetBlock(
+          (norm1): GroupNorm(32, 1280, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(1280, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+          (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(1280, 768, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+      )
+      (attentions): ModuleList(
+        (0-2): 3 x AttentionBlock(
+          (norm): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (to_q): Linear(in_features=768, out_features=768, bias=True)
+          (to_k): Linear(in_features=768, out_features=768, bias=True)
+          (to_v): Linear(in_features=768, out_features=768, bias=True)
+          (proj_attn): Linear(in_features=768, out_features=768, bias=True)
+        )
+      )
+      (upsampler): ResnetBlock(
+        (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+        (nonlinearity): SiLU()
+        (conv1): Convolution(
+          (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (upsample): Upsample()
+        (time_emb_proj): Linear(in_features=1024, out_features=768, bias=True)
+        (norm2): GroupNorm(32, 768, eps=1e-06, affine=True)
+        (conv2): Convolution(
+          (conv): Conv3d(768, 768, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (skip_connection): Identity()
+      )
+    )
+    (1): AttnUpBlock(
+      (resnets): ModuleList(
+        (0): ResnetBlock(
+          (norm1): GroupNorm(32, 1280, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(1280, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+          (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(1280, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (1): ResnetBlock(
+          (norm1): GroupNorm(32, 1024, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(1024, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+          (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(1024, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (2): ResnetBlock(
+          (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(768, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+          (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(768, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+      )
+      (attentions): ModuleList(
+        (0-2): 3 x AttentionBlock(
+          (norm): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (to_q): Linear(in_features=512, out_features=512, bias=True)
+          (to_k): Linear(in_features=512, out_features=512, bias=True)
+          (to_v): Linear(in_features=512, out_features=512, bias=True)
+          (proj_attn): Linear(in_features=512, out_features=512, bias=True)
+        )
+      )
+      (upsampler): ResnetBlock(
+        (norm1): GroupNorm(32, 512, eps=1e-06, affine=True)
+        (nonlinearity): SiLU()
+        (conv1): Convolution(
+          (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (upsample): Upsample()
+        (time_emb_proj): Linear(in_features=1024, out_features=512, bias=True)
+        (norm2): GroupNorm(32, 512, eps=1e-06, affine=True)
+        (conv2): Convolution(
+          (conv): Conv3d(512, 512, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+        )
+        (skip_connection): Identity()
+      )
+    )
+    (2): UpBlock(
+      (resnets): ModuleList(
+        (0): ResnetBlock(
+          (norm1): GroupNorm(32, 768, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(768, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=256, bias=True)
+          (norm2): GroupNorm(32, 256, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(768, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+        (1-2): 2 x ResnetBlock(
+          (norm1): GroupNorm(32, 512, eps=1e-06, affine=True)
+          (nonlinearity): SiLU()
+          (conv1): Convolution(
+            (conv): Conv3d(512, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (time_emb_proj): Linear(in_features=1024, out_features=256, bias=True)
+          (norm2): GroupNorm(32, 256, eps=1e-06, affine=True)
+          (conv2): Convolution(
+            (conv): Conv3d(256, 256, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+          )
+          (skip_connection): Convolution(
+            (conv): Conv3d(512, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+          )
+        )
+      )
+    )
+  )
+  (out): Sequential(
+    (0): GroupNorm(32, 256, eps=1e-06, affine=True)
+    (1): SiLU()
+    (2): Convolution(
+      (conv): Conv3d(256, 3, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+    )
+  )
+)

@@ -1,0 +1,32 @@
+train_txt_path: '/home/huutien/5_folds_split_3D/VQGAN/fold_1_train.txt'
+val_txt_path: '/home/huutien/5_folds_split_3D/VQGAN/fold_1_val.txt'
+data_dir: '/home/huutien/filter_ds'
+model_dir: '/home/huutien/sources/GenerativeModels/large_files'
+project_name: "VQ-VAE"
+run_name : "3D_training_KL" 
+save_dir : "/home/huutien/sources/GenerativeModels/3D_training/results"
+device : 'cuda'
+adv_weight : 0.01
+perceptual_weight : 0.001
+kl_weight : 0.000001
+n_epochs : 100
+autoencoder_warm_up_n_epochs : 5
+val_interval : 2
+
+batch_size : 2
+num_workers : 4
+cache_rate : 1.0
+use_bfloat16 : True
+
+# optimizer
+
+optimizer_g : "AdamW"
+optimizer_d : "AdamW"
+
+optimizer_g_params : {
+    "lr": 0.00005 
+}
+optimizer_d_params : {
+    "lr": 0.00005, 
+}
+
