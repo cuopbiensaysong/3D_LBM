@@ -97,7 +97,6 @@ class Trainer():
             self.global_epoch = epoch
             epoch_loss = 0
             for train_batch in pbar:
-                
                 self.global_step += 1
                 self.unet.train()
                 loss = self.loss_fn(
