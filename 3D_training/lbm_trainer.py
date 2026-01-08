@@ -68,13 +68,13 @@ class LBMTrainer(Trainer):
 
     
     def loss_fn(self, batch, stage='train'):
-        print(f"[DEBUG loss_fn] Moving batch to device...")
+        print(f"[DEBUG loss_fn] Moving batch to device...", flush=True)
         batch = {k: v.to(self.device, dtype=self.dtype) for k, v in batch.items()}
-        print(f"[DEBUG loss_fn] Batch on device. Encoding with VAE...")
+        print(f"[DEBUG loss_fn] Batch on device. Encoding with VAE...", flush=True)
         if self.vae is not None:
             vae_inputs = batch[self.target_key]
             z = self.vae.encode_stage_2_inputs(vae_inputs)
-            print(f"[DEBUG loss_fn] Target encoded, z shape: {z.shape}")
+            print(f"[DEBUG loss_fn] Target encoded, z shape: {z.shape}", flush=True)
             # downsampling_factor = self.vae.downsampling_factor
         else:
             z = batch[self.target_key]
@@ -84,7 +84,7 @@ class LBMTrainer(Trainer):
 
         if self.vae is not None:
             z_source = self.vae.encode_stage_2_inputs(source_image)
-            print(f"[DEBUG loss_fn] Source encoded, z_source shape: {z_source.shape}")
+            print(f"[DEBUG loss_fn] Source encoded, z_source shape: {z_source.shape}", flush=True)
         else:
             z_source = source_image
         

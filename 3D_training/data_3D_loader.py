@@ -135,18 +135,15 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
             # 2. Random 90 degree rotation (cheap and effective)
             RandRotate90d(keys=["A", "B"], prob=0.3, max_k=3),
             
-            # 3. Random Affine (Rotation + Zoom)
-            # This is the most powerful 3D augmentation.
-            # rotate_range: +/- 15 degrees (in radians approx 0.26)
-            # scale_range: zoom in/out by 10%
-            RandAffined(
-                keys=["A", "B"],
-                mode=("bilinear", "bilinear"),
-                prob=0.5,
-                rotate_range=(0.26, 0.26, 0.26),
-                scale_range=(0.1, 0.1, 0.1),
-                padding_mode="border" # Important to avoid black borders
-            ),
+            # 3. Random Affine (Rotation + Zoom) - TEMPORARILY DISABLED for debugging
+            # RandAffined(
+            #     keys=["A", "B"],
+            #     mode=("bilinear", "bilinear"),
+            #     prob=0.5,
+            #     rotate_range=(0.26, 0.26, 0.26),
+            #     scale_range=(0.1, 0.1, 0.1),
+            #     padding_mode="border" # Important to avoid black borders
+            # ),
 
             # --- Intensity Augmentations (Usually independent) ---
             # Only adding noise to Input (A) helps the model denoise/generalize.
@@ -178,11 +175,11 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
             num_workers=num_workers
         )
         # Convert cached items to a list and wrap with Dataset for augmentations
-        print("Converting cached data to list...")
+        print("Converting cached data to list...", flush=True)
         cached_data = [cached_ds[i] for i in tqdm(range(len(cached_ds)), desc="Preparing train data")]
-        print("Creating Dataset with augmentations...")
+        print("Creating Dataset with augmentations...", flush=True)
         ds = Dataset(data=cached_data, transform=aug_transforms)
-        print("Train dataset ready.")
+        print("Train dataset ready.", flush=True)
     else:
         # For validation: just cache everything
         ds = CacheDataset(
