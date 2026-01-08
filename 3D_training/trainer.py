@@ -45,6 +45,18 @@ class Trainer():
         else:
             self.dtype = torch.float32
 
+        import os
+        print(f"[DEBUG] CUDA_VISIBLE_DEVICES: {os.environ.get('CUDA_VISIBLE_DEVICES', 'NOT SET')}", flush=True)
+        print(f"[DEBUG] torch.version.cuda: {torch.version.cuda}", flush=True)
+        print(f"[DEBUG] torch.backends.cudnn.enabled: {torch.backends.cudnn.enabled}", flush=True)
+        print(f"[DEBUG] torch.cuda.is_available(): {torch.cuda.is_available()}", flush=True)
+        if torch.cuda.is_available():
+            print(f"[DEBUG] CUDA device count: {torch.cuda.device_count()}", flush=True)
+            print(f"[DEBUG] CUDA current device: {torch.cuda.current_device()}", flush=True)
+            print(f"[DEBUG] CUDA device name: {torch.cuda.get_device_name(0)}", flush=True)
+        else:
+            print("[DEBUG] WARNING: CUDA not available! Training will be extremely slow on CPU.", flush=True)
+            print("[DEBUG] Check if PyTorch was installed with CUDA support: pip install torch --index-url https://download.pytorch.org/whl/cu118", flush=True)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         print(f"[DEBUG] Moving models to {self.device} with dtype {self.dtype}...", flush=True)
