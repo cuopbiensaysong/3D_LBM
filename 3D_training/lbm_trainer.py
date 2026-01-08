@@ -6,11 +6,11 @@ import numpy as np
 from diffusers import FlowMatchEulerDiscreteScheduler
 
 
-import debugpy
-debugpy.listen(5678)
-print("Waiting for debugger to attach...")
-debugpy.wait_for_client()
-print("Debugger attached")
+# import debugpy
+# debugpy.listen(5678)
+# print("Waiting for debugger to attach...")
+# debugpy.wait_for_client()
+# print("Debugger attached")
 
 class LBMTrainer(Trainer):
     def __init__(self, cfg: omegaconf.DictConfig):
@@ -68,11 +68,13 @@ class LBMTrainer(Trainer):
 
     
     def loss_fn(self, batch, stage='train'):
-
+        print(f"[DEBUG loss_fn] Moving batch to device...")
         batch = {k: v.to(self.device, dtype=self.dtype) for k, v in batch.items()}
+        print(f"[DEBUG loss_fn] Batch on device. Encoding with VAE...")
         if self.vae is not None:
             vae_inputs = batch[self.target_key]
             z = self.vae.encode_stage_2_inputs(vae_inputs)
+            print(f"[DEBUG loss_fn] Target encoded, z shape: {z.shape}")
             # downsampling_factor = self.vae.downsampling_factor
         else:
             z = batch[self.target_key]
@@ -82,7 +84,7 @@ class LBMTrainer(Trainer):
 
         if self.vae is not None:
             z_source = self.vae.encode_stage_2_inputs(source_image)
-
+            print(f"[DEBUG loss_fn] Source encoded, z_source shape: {z_source.shape}")
         else:
             z_source = source_image
         

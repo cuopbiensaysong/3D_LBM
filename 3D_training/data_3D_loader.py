@@ -2,6 +2,7 @@
 import os
 import torch
 import pandas as pd
+from tqdm import tqdm
 from monai.data import CacheDataset, DataLoader, Dataset
 from monai.transforms import (
     Compose,
@@ -177,8 +178,11 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
             num_workers=num_workers
         )
         # Convert cached items to a list and wrap with Dataset for augmentations
-        cached_data = [cached_ds[i] for i in range(len(cached_ds))]
+        print("Converting cached data to list...")
+        cached_data = [cached_ds[i] for i in tqdm(range(len(cached_ds)), desc="Preparing train data")]
+        print("Creating Dataset with augmentations...")
         ds = Dataset(data=cached_data, transform=aug_transforms)
+        print("Train dataset ready.")
     else:
         # For validation: just cache everything
         ds = CacheDataset(

@@ -93,10 +93,14 @@ class Trainer():
         accumulate_grad_batches = self.cfg.accumulate_grad_batches
         best_val_loss = float('inf')
         for epoch in range(self.global_epoch, self.cfg.n_epochs):
+            print(f"[DEBUG] Starting epoch {epoch}, creating progress bar...")
             pbar = tqdm(self.train_loader, total=len(self.train_loader), smoothing=0.01)
             self.global_epoch = epoch
             epoch_loss = 0
-            for train_batch in pbar:
+            print("[DEBUG] Starting iteration over train_loader...")
+            for batch_idx, train_batch in enumerate(pbar):
+                if batch_idx == 0:
+                    print(f"[DEBUG] First batch received! Keys: {train_batch.keys() if hasattr(train_batch, 'keys') else type(train_batch)}")
                 self.global_step += 1
                 self.unet.train()
                 loss = self.loss_fn(
