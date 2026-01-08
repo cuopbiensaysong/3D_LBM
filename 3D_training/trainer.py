@@ -47,8 +47,11 @@ class Trainer():
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
+        print(f"[DEBUG] Moving models to {self.device} with dtype {self.dtype}...", flush=True)
         self.unet.to(self.device, dtype=self.dtype)
         self.vae.to(self.device, dtype=self.dtype)
+        self.vae.autoencoder.eval()  # VAE should always be in eval mode
+        print(f"[DEBUG] Models moved to device. VAE in eval mode.", flush=True)
 
         # data loader
         self.train_loader = get_i2i_3D_dataloader(cfg.train_csv_path, root_dir=cfg.data_dir, stage="train", batch_size=cfg.batch_size, num_workers=cfg.num_workers, cache_rate=cfg.cache_rate)

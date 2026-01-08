@@ -54,8 +54,17 @@ class WrapperAutoencoderKL():
         return self
 
     def encode_stage_2_inputs(self, x):
+        print(f"[DEBUG VAE] encode_stage_2_inputs called, x shape: {x.shape}, device: {x.device}", flush=True)
+        # Ensure latent stats are on the same device as input
+        if self.latent_means.device != x.device:
+            print(f"[DEBUG VAE] Moving latent_means from {self.latent_means.device} to {x.device}", flush=True)
+            self.latent_means = self.latent_means.to(x.device, dtype=x.dtype)
+            self.latent_stds = self.latent_stds.to(x.device, dtype=x.dtype)
+        print(f"[DEBUG VAE] Calling autoencoder.encode_stage_2_inputs...", flush=True)
         z = self.autoencoder.encode_stage_2_inputs(x)
+        print(f"[DEBUG VAE] autoencoder.encode done, z shape: {z.shape}", flush=True)
         z = (z - self.latent_means) / self.latent_stds
+        print(f"[DEBUG VAE] normalization done", flush=True)
         return z
 
     def decode_stage_2_outputs(self, z):

@@ -70,10 +70,17 @@ class LBMTrainer(Trainer):
     def loss_fn(self, batch, stage='train'):
         print(f"[DEBUG loss_fn] Moving batch to device...", flush=True)
         batch = {k: v.to(self.device, dtype=self.dtype) for k, v in batch.items()}
-        print(f"[DEBUG loss_fn] Batch on device. Encoding with VAE...", flush=True)
+        print(f"[DEBUG loss_fn] Batch on device.", flush=True)
         if self.vae is not None:
             vae_inputs = batch[self.target_key]
-            z = self.vae.encode_stage_2_inputs(vae_inputs)
+            print(f"[DEBUG loss_fn] VAE input shape: {vae_inputs.shape}, dtype: {vae_inputs.dtype}, device: {vae_inputs.device}", flush=True)
+            print(f"[DEBUG loss_fn] Calling VAE encode...", flush=True)
+            import torch
+            torch.cuda.synchronize()  # Force sync before encoding
+            print(f"[DEBUG loss_fn] CUDA synced, starting encode...", flush=True)
+            with torch.no_grad():  # VAE encoding doesn't need gradients
+                z = self.vae.encode_stage_2_inputs(vae_inputs)
+            torch.cuda.synchronize()  # Force sync after encoding
             print(f"[DEBUG loss_fn] Target encoded, z shape: {z.shape}", flush=True)
             # downsampling_factor = self.vae.downsampling_factor
         else:
@@ -83,7 +90,9 @@ class LBMTrainer(Trainer):
         source_image = batch[self.source_key]
 
         if self.vae is not None:
-            z_source = self.vae.encode_stage_2_inputs(source_image)
+            print(f"[DEBUG loss_fn] Encoding source...", flush=True)
+            with torch.no_grad():
+                z_source = self.vae.encode_stage_2_inputs(source_image)
             print(f"[DEBUG loss_fn] Source encoded, z_source shape: {z_source.shape}", flush=True)
         else:
             z_source = source_image
