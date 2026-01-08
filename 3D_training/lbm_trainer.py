@@ -75,12 +75,8 @@ class LBMTrainer(Trainer):
             vae_inputs = batch[self.target_key]
             print(f"[DEBUG loss_fn] VAE input shape: {vae_inputs.shape}, dtype: {vae_inputs.dtype}, device: {vae_inputs.device}", flush=True)
             print(f"[DEBUG loss_fn] Calling VAE encode...", flush=True)
-            import torch
-            torch.cuda.synchronize()  # Force sync before encoding
-            print(f"[DEBUG loss_fn] CUDA synced, starting encode...", flush=True)
             with torch.no_grad():  # VAE encoding doesn't need gradients
                 z = self.vae.encode_stage_2_inputs(vae_inputs)
-            torch.cuda.synchronize()  # Force sync after encoding
             print(f"[DEBUG loss_fn] Target encoded, z shape: {z.shape}", flush=True)
             # downsampling_factor = self.vae.downsampling_factor
         else:
