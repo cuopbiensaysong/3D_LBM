@@ -160,42 +160,28 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
 
     print(f"Loading {len(data_dicts)} pairs into RAM (Stage 1)...")
     
-    # Combine pre-transforms with augmentations for train, or just pre-transforms for val
-    if stage == 'train' and aug_transforms is not None:
-        full_transforms = Compose([pre_transforms, aug_transforms])
-    else:
-        full_transforms = pre_transforms
+    # A. The Cached Dataset (Holds the pre-processed tensors in RAM)
+    cached_ds = CacheDataset(
+        data=data_dicts, 
+        transform=pre_transforms, 
+        cache_rate=cache_rate, 
+        num_workers=num_workers
+    )
 
-    # Use CacheDataset directly - cache deterministic parts only if no augmentation,
-    # otherwise use regular Dataset for training to ensure fresh augmentations each epoch
+    # B. The Wrapper Dataset (Applies random augs to the cached tensors)
+    # This ensures every epoch sees a NEW variation of the data.
     if stage == 'train':
-        # For training: cache the pre-transforms, then apply augmentations on-the-fly
-        cached_ds = CacheDataset(
-            data=data_dicts, 
-            transform=pre_transforms, 
-            cache_rate=cache_rate, 
-            num_workers=num_workers
-        )
-        # Convert cached items to a list and wrap with Dataset for augmentations
-        cached_data = [cached_ds[i] for i in range(len(cached_ds))]
-        ds = Dataset(data=cached_data, transform=aug_transforms)
+        ds = Dataset(data=cached_ds, transform=aug_transforms)
     else:
-        # For validation: just cache everything
-        ds = CacheDataset(
-            data=data_dicts, 
-            transform=pre_transforms, 
-            cache_rate=cache_rate, 
-            num_workers=num_workers
-        )
+        ds = cached_ds
 
     # 4. DataLoader
     loader = DataLoader(
         ds, 
         batch_size=batch_size, 
         shuffle=shuffle, 
-        num_workers=num_workers,  # Use the passed num_workers instead of hardcoded 0
-        pin_memory=torch.cuda.is_available(),
-        persistent_workers=num_workers > 0,
+        num_workers=num_workers, 
+        pin_memory=torch.cuda.is_available()
     )
     
     return loader
