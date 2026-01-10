@@ -102,10 +102,17 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
     df = pd.read_csv(csv_path)
     data_dicts = []
     for _, row in df.iterrows():
-        data_dicts.append({
+
+        data_sample = {
             "A": os.path.join(root_dir, row["img_path_A"].strip()),
             "B": os.path.join(root_dir, row["img_path_B"].strip()),
-        })
+        }
+        try: 
+            data_sample["ID"] = row["ID"]
+        except:
+            pass
+        data_dicts.append(data_sample)
+
 
     # 2. STAGE 1: Deterministic Transforms (Cached)
     # These run ONCE and are stored in RAM.

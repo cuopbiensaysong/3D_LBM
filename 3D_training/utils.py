@@ -44,3 +44,9 @@ def get_optimizer(optim_config, parameters):
         return torch.optim.SGD(parameters, lr=optim_config.lr, momentum=0.9)
     else:
         return NotImplementedError('Optimizer {} not understood.'.format(optim_config.optimizer))
+
+
+if __name__ == "__main__":
+    import numpy as np
+    num_steps = 20
+    print (np.linspace(1, 1 / num_steps, num_steps))

@@ -69,7 +69,9 @@ class LBMTrainer(Trainer):
     
     def loss_fn(self, batch, stage='train'):
 
-        batch = {k: v.to(self.device, dtype=self.dtype) for k, v in batch.items()}
+        # batch = {k: v.to(self.device, dtype=self.dtype) for k, v in batch.items()}
+        batch[self.target_key] = batch[self.target_key].to(self.device, dtype=self.dtype)
+        batch[self.source_key] = batch[self.source_key].to(self.device, dtype=self.dtype)
         if self.vae is not None:
             vae_inputs = batch[self.target_key]
             z = self.vae.encode_stage_2_inputs(vae_inputs)
