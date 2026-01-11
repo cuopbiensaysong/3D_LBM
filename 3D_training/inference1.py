@@ -218,7 +218,7 @@ class Inference():
                 decoded_sample = self.sample(z, num_steps=self.num_inference_steps)
             # Save Output
                 if self.save_img_output:
-                    np_sample = decoded_sample.cpu().numpy()
+                    np_sample = decoded_sample.cpu().detach().numpy()
                     np.save(os.path.join(save_path, f"output_{j}.npy"), np_sample)
 
             # Compute Metrics (Accumulate)

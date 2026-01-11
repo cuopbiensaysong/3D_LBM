@@ -1,0 +1,13 @@
+Loaded UNet model from /home/user01/aiotlab/htien/3D_LBM/3D_training/results/3D_training_LBM_200epochs/best_checkpoint.pth at epoch 163 on cuda
+Loading 100 pairs into RAM (Stage 1)...
+Initializing Metrics...
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+Loading model from: /home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+Starting inference on 100 samples...
+Computing final metrics...
+
+=== Final Evaluation Results ===
+SSIM: 0.4785
+PSNR: 25.6010
+LPIPS: 0.1965
+FID: 0.4655

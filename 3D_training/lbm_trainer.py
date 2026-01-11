@@ -6,11 +6,11 @@ import numpy as np
 from diffusers import FlowMatchEulerDiscreteScheduler
 
 
-import debugpy
-debugpy.listen(5678)
-print("Waiting for debugger to attach...")
-debugpy.wait_for_client()
-print("Debugger attached")
+# import debugpy
+# debugpy.listen(5678)
+# print("Waiting for debugger to attach...")
+# debugpy.wait_for_client()
+# print("Debugger attached")
 
 class LBMTrainer(Trainer):
     def __init__(self, cfg: omegaconf.DictConfig):
