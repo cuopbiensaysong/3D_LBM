@@ -16,7 +16,8 @@ from data_3D_loader import get_i2i_3D_dataloader
 # Metric Imports
 import lpips
 from torchmetrics.image.fid import FrechetInceptionDistance
-from torchmetrics.image import StructuralSimilarityIndexMeasure, PeakSignalNoiseRatio
+# from torchmetrics.image import StructuralSimilarityIndexMeasure, PeakSignalNoiseRatio
+from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--test_csv_path", type=str, default=None)
@@ -92,10 +93,10 @@ class Inference():
             self.lpips_metric = lpips.LPIPS(net='vgg').to(self.device)
             
             # SSIM: Structural Similarity.
-            self.ssim_metric = StructuralSimilarityIndexMeasure(data_range=1.0).to(self.device)
+            # self.ssim_metric = StructuralSimilarityIndexMeasure(data_range=1.0).to(self.device)
             
             # PSNR: Peak Signal to Noise Ratio
-            self.psnr_metric = PeakSignalNoiseRatio(data_range=1.0).to(self.device)
+            # self.psnr_metric = PeakSignalNoiseRatio(data_range=1.0).to(self.device)
 
             # Storage for scalar metrics to average later
             self.scores = {
@@ -155,6 +156,9 @@ class Inference():
         """Normalize data to [0, 1] for metrics."""
         return (x - x.min()) / (x.max() - x.min() + 1e-8)
 
+    def get_min_max(self, x, y):
+        return min(x.min(), y.min()), max(x.max(), y.max())
+
     def update_metrics(self, decoded_sample, target_img):
         """
         Accumulates statistics for metrics.
@@ -166,12 +170,18 @@ class Inference():
         target_norm = self._normalize_min_max(target_img)
 
         # 1. SSIM (Can handle 5D input with torchmetrics if data_range is set)
-        ssim_val = self.ssim_metric(decoded_norm, target_norm)
-        self.scores["ssim"].append(ssim_val.item())
+        # ssim_metric = structural_similarity(decoded_norm, target_norm)
+        # ssim_val = ssim_metric(decoded_norm, target_norm)
+        decoded_sample = decoded_sample.cpu().detach().numpy()
+        target_img = target_img.cpu().detach().numpy()
+        MIN, MAX = self.get_min_max(decoded_sample, target_img)
+        
+        ssim_val = structural_similarity(decoded_sample, target_img, data_range=MAX - MIN)
+        self.scores["ssim"].append(ssim_val)
 
         # 2. PSNR
-        psnr_val = self.psnr_metric(decoded_norm, target_norm)
-        self.scores["psnr"].append(psnr_val.item())
+        psnr_val = peak_signal_noise_ratio(decoded_sample, target_img, data_range=MAX - MIN)
+        self.scores["psnr"].append(psnr_val)
 
         # Prepare for 2D-based metrics (LPIPS, FID)
         # Flatten depth into batch dimension: (B*D, 3, H, W)
