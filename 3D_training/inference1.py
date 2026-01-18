@@ -176,11 +176,11 @@ class Inference():
         target_img = target_img.cpu().detach().numpy()
         MIN, MAX = self.get_min_max(decoded_sample, target_img)
         
-        ssim_val = structural_similarity(decoded_sample, target_img, data_range=MAX - MIN)
+        ssim_val = structural_similarity(decoded_sample[0][0], target_img[0][0], data_range=MAX - MIN)
         self.scores["ssim"].append(ssim_val)
 
         # 2. PSNR
-        psnr_val = peak_signal_noise_ratio(decoded_sample, target_img, data_range=MAX - MIN)
+        psnr_val = peak_signal_noise_ratio(decoded_sample[0][0], target_img[0][0], data_range=MAX - MIN)
         self.scores["psnr"].append(psnr_val)
 
         # Prepare for 2D-based metrics (LPIPS, FID)
