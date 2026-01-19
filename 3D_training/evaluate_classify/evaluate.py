@@ -65,7 +65,7 @@ inference_dir = '/home/user01/aiotlab/htien/3D_LBM/3D_training/results/inference
 test_df = pd.read_csv('./test_label_CN_pMCI.csv')
 ckpt_path = './Classification-models/from_scratch_DenseNet121_train+val.pth'
 device = 'cuda'
-log_txt_file = '/home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20/classification_log.txt'
+log_txt_file = os.path.join(inference_dir, 'classification_log.txt')
 
 # Load Model
 model = get_densenet121(ckpt_path, device)

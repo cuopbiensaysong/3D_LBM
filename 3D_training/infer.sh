@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=lbm       # Job name
-#SBATCH --output=slurm/out.txt      # Output file
-#SBATCH --error=slurm/error_m3d.txt        # Error file
+#SBATCH --output=slurm/out20.txt      # Output file
+#SBATCH --error=slurm/error20.txt        # Error file
 #SBATCH --ntasks=1               # Number of tasks (processes)
 #SBATCH --cpus-per-task=4        # Number of CPU cores per task
 #SBATCH --mem=80G                 # Memory per node (4 GB)
