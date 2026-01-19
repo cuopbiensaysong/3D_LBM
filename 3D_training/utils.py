@@ -46,7 +46,9 @@ def get_optimizer(optim_config, parameters):
         return NotImplementedError('Optimizer {} not understood.'.format(optim_config.optimizer))
 
 
+def get_subfolder_names(dir_path):
+    return os.listdir(dir_path)
+
 if __name__ == "__main__":
-    import numpy as np
-    num_steps = 20
-    print (np.linspace(1, 1 / num_steps, num_steps))
+    dir_path = '/home/huutien/sources/GenerativeModels/3D_training'
+    print(get_subfolder_names(dir_path))
