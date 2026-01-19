@@ -210,6 +210,15 @@ class Inference():
         print(f"Starting inference on {len(self.test_data_loader)} samples...")
         
         for i, sample in enumerate(tqdm(self.test_data_loader)):
+            
+            if self.save_img_output:
+                save_path = os.path.join(self.save_img_dir, sample_id)
+                if not os.path.exists(save_path):
+                    os.makedirs(save_path)
+                else:
+                    print(f"Save path {save_path} already exists")
+                    continue
+                
             src_img = sample['A'].to(self.device, dtype=self.dtype)
             
             # Encode
@@ -219,13 +228,7 @@ class Inference():
                 z = src_img
 
             sample_id = sample['ID'][0] if isinstance(sample['ID'], list) else sample['ID']
-            if self.save_img_output:
-                save_path = os.path.join(self.save_img_dir, sample_id)
-                if not os.path.exists(save_path):
-                    os.makedirs(save_path)
-                else:
-                    print(f"Save path {save_path} already exists")
-                    continue
+            
             # Generate
             # We assume batch_size=1 here based on loader
             for j in range(self.num_outputs_per_sample):
