@@ -5,6 +5,7 @@
 large_files/*
 3D_training/results/*
 3D_training/wandb/*
+3D_training/evaluate_classify/Classification-models/*
 __pycache__/
 *.py[cod]
 *$py.class

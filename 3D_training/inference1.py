@@ -258,6 +258,10 @@ class Inference():
             for k, v in final_results.items():
                 print(f"{k}: {v:.4f}")
             
+            from compute_diversity import calc_diversity
+            diversity = calc_diversity(self.save_img_dir)
+
+            final_results["diversity"] = diversity
             # Save to CSV
             df = pd.DataFrame([final_results])
             df.to_csv(os.path.join(self.output_dir, "metrics.csv"), index=False)
@@ -320,3 +324,4 @@ class Inference():
 if __name__ == "__main__":
     inference = Inference(args)
     inference.test()
+    
