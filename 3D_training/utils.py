@@ -23,7 +23,7 @@ def setup_wandb(project_name: str, run_name: str, config: dict):
     plain_config = _to_plain_config(config)
     return wandb.init(project=project_name, name=run_name, config=plain_config, reinit=True)
 
-def save_config(config: dict, run_dir: str, filename: str = "KL_config.yaml"):
+def save_config(config: dict, run_dir: str, filename: str = "config.yaml"):
     os.makedirs(run_dir, exist_ok=True)
     config_path = os.path.join(run_dir, filename)
     if isinstance(config, (omegaconf.DictConfig, omegaconf.ListConfig)):
