@@ -11,11 +11,11 @@ def calc_diversity(data_dir, num_samples=5):
 
     total = len(dir_list)
     std = 0
-    for i in tqdm(range(total), total=total, smoothing=0.01):
+    for dir_name in tqdm(dir_list):
         imgs = []
         for j in range(num_samples):
             # img = Image.open(os.path.join(os.path.join(data_dir, str(i), f'output_{str(j)}.png')))
-            np_img = np.load(os.path.join(os.path.join(data_dir, str(i), f'output_{str(j)}.npy')))
+            np_img = np.load(os.path.join(os.path.join(data_dir, dir_name, f'output_{str(j)}.npy')))
             # img = transform(img)
             imgs.append(torch.from_numpy(np_img))
 

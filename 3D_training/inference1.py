@@ -208,73 +208,73 @@ class Inference():
 
     def test(self):
         print(f"Starting inference on {len(self.test_data_loader)} samples...")
-        
-        for i, sample in enumerate(tqdm(self.test_data_loader)):
-            
-            if self.save_img_output:
-                save_path = os.path.join(self.save_img_dir, sample_id)
-                if not os.path.exists(save_path):
-                    os.makedirs(save_path)
-                else:
-                    print(f"Save path {save_path} already exists")
-                    continue
-                
-            src_img = sample['A'].to(self.device, dtype=self.dtype)
-            
-            # Encode
-            if self.vae is not None:
-                z = self.vae.encode_stage_2_inputs(src_img)
-            else:
-                z = src_img
-
-            sample_id = sample['ID'][0] if isinstance(sample['ID'], list) else sample['ID']
-            
-            # Generate
-            # We assume batch_size=1 here based on loader
-            for j in range(self.num_outputs_per_sample):
-                decoded_sample = self.sample(z, num_steps=self.num_inference_steps)
-            # Save Output
+        with torch.no_grad():
+            for i, sample in enumerate(tqdm(self.test_data_loader)):
+                sample_id = sample['ID'][0] if isinstance(sample['ID'], list) else sample['ID']
                 if self.save_img_output:
-                    np_sample = decoded_sample.cpu().detach().numpy()
-                    np.save(os.path.join(save_path, f"output_{j}.npy"), np_sample)
+                    save_path = os.path.join(self.save_img_dir, sample_id)
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)
+                    else:
+                        print(f"Save path {save_path} already exists")
+                        continue
+                    
+                src_img = sample['A'].to(self.device, dtype=self.dtype)
+                
+                # Encode
+                if self.vae is not None:
+                    z = self.vae.encode_stage_2_inputs(src_img)
+                else:
+                    z = src_img
 
-            # Compute Metrics (Accumulate)
-                if self.compute_metrics and j == 0:
-                    target_img = sample['B'].to(self.device, dtype=self.dtype)
-                    self.update_metrics(decoded_sample, target_img)
+                
+                
+                # Generate
+                # We assume batch_size=1 here based on loader
+                for j in range(self.num_outputs_per_sample):
+                    decoded_sample = self.sample(z, num_steps=self.num_inference_steps)
+                # Save Output
+                    if self.save_img_output:
+                        np_sample = decoded_sample.cpu().detach().numpy()
+                        np.save(os.path.join(save_path, f"output_{j}.npy"), np_sample)
 
-        # Finalize Metrics Calculation
-        if self.compute_metrics:
-            print("Computing final metrics...")
-            final_results = {}
-            
-            # Average per-sample metrics
-            final_results["SSIM"] = np.mean(self.scores["ssim"])
-            final_results["PSNR"] = np.mean(self.scores["psnr"])
-            final_results["LPIPS"] = np.mean(self.scores["lpips"])
-            
-            # Compute distributional metric exactly over the whole dataset
-            # This runs the Fréchet distance calc on the accumulated covariance matrices
-            try:
-                final_results["FID"] = self.fid_metric.compute().item()
-            except Exception as e:
-                print(f"Error computing FID (requires >1 sample usually): {e}")
-                final_results["FID"] = -1.0
+                # Compute Metrics (Accumulate)
+                    if self.compute_metrics and j == 0:
+                        target_img = sample['B'].to(self.device, dtype=self.dtype)
+                        self.update_metrics(decoded_sample, target_img)
 
-            print("\n=== Final Evaluation Results ===")
-            for k, v in final_results.items():
-                print(f"{k}: {v:.4f}")
-            
-            from compute_diversity import calc_diversity
-            diversity = calc_diversity(self.save_img_dir)
+            # Finalize Metrics Calculation
+            if self.compute_metrics:
+                print("Computing final metrics...")
+                final_results = {}
+                
+                # Average per-sample metrics
+                final_results["SSIM"] = np.mean(self.scores["ssim"])
+                final_results["PSNR"] = np.mean(self.scores["psnr"])
+                final_results["LPIPS"] = np.mean(self.scores["lpips"])
+                
+                # Compute distributional metric exactly over the whole dataset
+                # This runs the Fréchet distance calc on the accumulated covariance matrices
+                try:
+                    final_results["FID"] = self.fid_metric.compute().item()
+                except Exception as e:
+                    print(f"Error computing FID (requires >1 sample usually): {e}")
+                    final_results["FID"] = -1.0
 
-            final_results["diversity"] = diversity
-            # Save to CSV
-            df = pd.DataFrame([final_results])
-            df.to_csv(os.path.join(self.output_dir, "metrics.csv"), index=False)
-            
-            return final_results
-            
+                print("\n=== Final Evaluation Results ===")
+                for k, v in final_results.items():
+                    print(f"{k}: {v:.4f}")
+                
+                from compute_diversity import calc_diversity
+                diversity = calc_diversity(self.save_img_dir)
+
+                final_results["diversity"] = diversity
+                # Save to CSV
+                df = pd.DataFrame([final_results])
+                df.to_csv(os.path.join(self.output_dir, "metrics.csv"), index=False)
+                
+                return final_results
+                
         return None
 
     def _get_conditioning(self, z: torch.Tensor):

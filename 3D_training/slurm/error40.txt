@@ -1,0 +1,53 @@
+`torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+`torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+The config attributes {'clip_sample': False, 'sample_max_value': 1.0, 'set_alpha_to_one': False, 'skip_prk_steps': True} were passed to FlowMatchEulerDiscreteScheduler, but are not expected and will be ignored. Please verify your scheduler_config.json configuration file.
+monai.transforms.spatial.dictionary Orientationd.__init__:labels: Current default value of argument `labels=(('L', 'R'), ('P', 'A'), ('I', 'S'))` was changed in version None from `labels=(('L', 'R'), ('P', 'A'), ('I', 'S'))` to `labels=None`. Default value changed to None meaning that the transform now uses the 'space' of a meta-tensor, if applicable, to determine appropriate axis labels.
+Loading dataset:   0%|          | 0/100 [00:00<?, ?it/s]Loading dataset:   1%|          | 1/100 [00:00<00:31,  3.19it/s]Loading dataset:   5%|▌         | 5/100 [00:00<00:10,  9.17it/s]Loading dataset:   9%|▉         | 9/100 [00:00<00:08, 11.37it/s]Loading dataset:  13%|█▎        | 13/100 [00:01<00:07, 11.62it/s]Loading dataset:  17%|█▋        | 17/100 [00:01<00:07, 11.44it/s]Loading dataset:  21%|██        | 21/100 [00:01<00:06, 12.03it/s]Loading dataset:  25%|██▌       | 25/100 [00:02<00:06, 11.70it/s]Loading dataset:  29%|██▉       | 29/100 [00:02<00:05, 12.07it/s]Loading dataset:  33%|███▎      | 33/100 [00:02<00:05, 12.21it/s]Loading dataset:  37%|███▋      | 37/100 [00:03<00:05, 11.90it/s]Loading dataset:  41%|████      | 41/100 [00:03<00:04, 13.03it/s]Loading dataset:  45%|████▌     | 45/100 [00:03<00:04, 12.85it/s]Loading dataset:  49%|████▉     | 49/100 [00:04<00:04, 12.69it/s]Loading dataset:  53%|█████▎    | 53/100 [00:04<00:03, 12.87it/s]Loading dataset:  57%|█████▋    | 57/100 [00:04<00:03, 12.57it/s]Loading dataset:  61%|██████    | 61/100 [00:05<00:03, 12.58it/s]Loading dataset:  65%|██████▌   | 65/100 [00:05<00:02, 13.19it/s]Loading dataset:  67%|██████▋   | 67/100 [00:05<00:02, 13.97it/s]Loading dataset:  69%|██████▉   | 69/100 [00:05<00:02, 12.34it/s]Loading dataset:  73%|███████▎  | 73/100 [00:06<00:02, 12.01it/s]Loading dataset:  77%|███████▋  | 77/100 [00:06<00:01, 11.51it/s]Loading dataset:  80%|████████  | 80/100 [00:06<00:01, 12.99it/s]Loading dataset:  82%|████████▏ | 82/100 [00:07<00:01,  9.04it/s]Loading dataset:  85%|████████▌ | 85/100 [00:07<00:01,  9.19it/s]Loading dataset:  89%|████████▉ | 89/100 [00:07<00:01, 10.19it/s]Loading dataset:  93%|█████████▎| 93/100 [00:08<00:00, 10.72it/s]Loading dataset:  97%|█████████▋| 97/100 [00:08<00:00, 12.01it/s]Loading dataset: 100%|██████████| 100/100 [00:08<00:00, 11.97it/s]
+The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  0%|          | 0/100 [00:00<?, ?it/s]  1%|          | 1/100 [00:01<02:08,  1.30s/it]  1%|          | 1/100 [00:12<20:26, 12.39s/it]
+Traceback (most recent call last):
+  File "/home/user01/aiotlab/htien/3D_LBM/3D_training/inference1.py", line 333, in <module>
+    inference.test()
+  File "/home/user01/aiotlab/htien/3D_LBM/3D_training/inference1.py", line 235, in test
+    decoded_sample = self.sample(z, num_steps=self.num_inference_steps)
+  File "/home/user01/aiotlab/htien/3D_LBM/3D_training/inference1.py", line 325, in sample
+    decoded_sample = self.vae.decode_stage_2_outputs(sample)
+  File "/home/user01/aiotlab/htien/3D_LBM/3D_training/backbone.py", line 63, in decode_stage_2_outputs
+    decoded_z = self.autoencoder.decode_stage_2_outputs(z)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/generative/networks/nets/autoencoderkl.py", line 798, in decode_stage_2_outputs
+    image = self.decode(z)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/generative/networks/nets/autoencoderkl.py", line 783, in decode
+    dec = self.decoder(z)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/generative/networks/nets/autoencoderkl.py", line 596, in forward
+    x = block(x)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/generative/networks/nets/autoencoderkl.py", line 182, in forward
+    h = self.norm1(h)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/modules/normalization.py", line 313, in forward
+    return F.group_norm(input, self.num_groups, self.weight, self.bias, self.eps)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/functional.py", line 2934, in group_norm
+    return handle_torch_function(
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/overrides.py", line 1739, in handle_torch_function
+    result = torch_func_method(public_api, types, args, kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/monai/data/meta_tensor.py", line 283, in __torch_function__
+    ret = super().__torch_function__(func, types, args, kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/_tensor.py", line 1512, in __torch_function__
+    ret = func(*args, **kwargs)
+  File "/home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/torch/nn/functional.py", line 2955, in group_norm
+    return torch.group_norm(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.17 GiB. GPU 0 has a total capacity of 79.35 GiB of which 271.19 MiB is free. Including non-PyTorch memory, this process has 79.08 GiB memory in use. Of the allocated memory 77.32 GiB is allocated by PyTorch, and 123.58 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

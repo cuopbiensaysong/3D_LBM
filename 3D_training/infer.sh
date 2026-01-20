@@ -8,7 +8,5 @@
 #SBATCH --gpus=1                 # Number of GPUs per node
 
 
-python inference1.py --test_csv_path /home/user01/aiotlab/htien/5_folds_split_3D/fold_1_test.csv --output_dir /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20 --num_inference_steps 20 --ckpt_path /home/user01/aiotlab/htien/3D_LBM/3D_training/results/3D_LBM_uniform_noise0.005/best_checkpoint.pth --config_path /home/user01/aiotlab/htien/3D_LBM/3D_training/results/3D_LBM_uniform_noise0.005/config.yaml --save_img_output True --num_outputs_per_sample 30 --compute_metrics True
+python inference1.py --test_csv_path /home/user01/aiotlab/htien/5_folds_split_3D/fold_1_test.csv --output_dir /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.01_step20 --num_inference_steps 20 --ckpt_path /home/user01/aiotlab/htien/3D_LBM/3D_training/results/3D_LBM_uniform_noise0.01/best_checkpoint.pth --config_path /home/user01/aiotlab/htien/3D_LBM/3D_training/results/3D_LBM_uniform_noise0.01/config.yaml --save_img_output True --num_outputs_per_sample 30 --compute_metrics True
 
-cd evaluate_classify
-python evaluate.py
