@@ -9,6 +9,7 @@ from sklearn.metrics import (
     roc_auc_score, confusion_matrix, balanced_accuracy_score, 
     matthews_corrcoef, cohen_kappa_score, average_precision_score
 )
+import argparse
 
 from model import get_densenet121
 
@@ -59,12 +60,30 @@ def predict_patient(patient_dir, model, device='cuda', log_txt_file=None):
 
     return predicted_label, prob_positive
 
+def log_text_file(text, log_txt_file):
+    with open(log_txt_file, 'a') as f:
+        f.write(text + '\n')
+    
+    print(text)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inference_dir', type=str, default='/home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20')
+    parser.add_argument('--test_csv_path', type=str, default='./test_label_CN_pMCI.csv')
+    parser.add_argument('--ckpt_path', type=str, default='./Classification-models/from_scratch_DenseNet121_train+val.pth')
+    parser.add_argument('--device', type=str, default='cuda')
+    return parser.parse_args()
+
+args = parse_args()
+inference_dir = args.inference_dir
+test_csv_path = args.test_csv_path
+ckpt_path = args.ckpt_path
+device = args.device
+
 # --- Setup ---
 map_labels = {'CN': 0, 'AD': 1}
-inference_dir = '/home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20'
-test_df = pd.read_csv('./test_label_CN_pMCI.csv')
-ckpt_path = './Classification-models/from_scratch_DenseNet121_train+val.pth'
-device = 'cuda'
+test_df = pd.read_csv(test_csv_path)
 log_txt_file = os.path.join(inference_dir, 'classification_log.txt')
 
 # Load Model
@@ -78,7 +97,12 @@ predictions = []
 probabilities = []
 ground_truths = []
 
-print("Starting Inference...")
+log_text_file("Starting Inference...", log_txt_file)
+log_text_file(f"Inference directory: {inference_dir}", log_txt_file)
+log_text_file(f"Test CSV path: {test_csv_path}", log_txt_file)
+log_text_file(f"CKPT path: {ckpt_path}", log_txt_file)
+
+
 for index, row in tqdm(test_df.iterrows(), total=test_df.shape[0]):
     patient_dir = os.path.join(inference_dir, row['ID'])
     
@@ -173,3 +197,7 @@ with open(log_txt_file, 'a') as f:
     f.write(f"PR AUC:            {auprc:.4f}\n")
     f.write(f"Confusion Matrix:  TN={tn}, FP={fp}, FN={fn}, TP={tp}\n")
     f.write("=" * 60 + "\n")
+
+
+log_text_file("Evaluation completed successfully.", log_txt_file)
+log_text_file("*" * 100 + "\n", log_txt_file)
