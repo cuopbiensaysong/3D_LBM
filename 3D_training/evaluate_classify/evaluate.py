@@ -200,4 +200,4 @@ with open(log_txt_file, 'a') as f:
 
 
 log_text_file("Evaluation completed successfully.", log_txt_file)
-log_text_file("*" * 100 + "\n", log_txt_file)
+log_text_file("*" * 100, log_txt_file)

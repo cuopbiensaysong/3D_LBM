@@ -192,3 +192,65 @@ def get_i2i_3D_dataloader(csv_path, stage='train', root_dir="./", batch_size=4, 
     )
     
     return loader
+
+
+def get_i2i_3D_dataloader_for_inference(csv_path, stage='train', root_dir="./", batch_size=4, num_workers=4, cache_rate=1.0):
+
+    # 1. Parse CSV
+    df = pd.read_csv(csv_path)
+    data_dicts = []
+    for _, row in df.iterrows():
+
+        data_sample = {
+            "A": os.path.join(root_dir, row["img_path_A"].strip()),
+        }
+        try: 
+            data_sample["ID"] = row["ID"]
+            data_sample["label"] = row["DX_B"]
+            data_sample["subject_id"] = row["subject ID"]
+        except:
+            pass
+        data_dicts.append(data_sample)
+
+
+    # 2. STAGE 1: Deterministic Transforms (Cached)
+    # These run ONCE and are stored in RAM.
+    pre_transforms = Compose([
+        LoadImaged(keys=["A"]),
+        EnsureChannelFirstd(keys=["A"]),
+        # Standardize orientation to RAS (Right, Anterior, Superior) to ensure consistency
+        Orientationd(keys=["A"], axcodes="RAS"), 
+        # Deterministic intensity scaling
+        Lambdad(keys=["A"], func=lambda x: x - 0.8),
+        EnsureTyped(keys=["A"]),
+    ])
+
+    # 3. STAGE 2: Random Augmentations (On-the-fly)
+    # These run on the CPU every time a batch is fetched.
+    # Note: We apply geometric transforms to BOTH A and B to keep them aligned.
+
+    print(f"Loading {len(data_dicts)} pairs into RAM (Stage 1)...")
+    
+    # A. The Cached Dataset (Holds the pre-processed tensors in RAM)
+    cached_ds = CacheDataset(
+        data=data_dicts, 
+        transform=pre_transforms, 
+        cache_rate=cache_rate, 
+        num_workers=num_workers
+    )
+
+    # B. The Wrapper Dataset (Applies random augs to the cached tensors)
+    # This ensures every epoch sees a NEW variation of the data.
+    
+    ds = cached_ds
+
+    # 4. DataLoader
+    loader = DataLoader(
+        ds, 
+        batch_size=batch_size, 
+        shuffle=False, 
+        num_workers=num_workers, 
+        pin_memory=torch.cuda.is_available()
+    )
+    
+    return loader

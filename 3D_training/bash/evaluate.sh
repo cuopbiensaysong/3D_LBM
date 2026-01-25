@@ -7,6 +7,8 @@
 #SBATCH --mem=80G                 # Memory per node (4 GB)
 #SBATCH --gpus=1                 # Number of GPUs per node
 
+cd evaluate_classify
+
 python evaluate.py --inference_dir /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20 
 
 
