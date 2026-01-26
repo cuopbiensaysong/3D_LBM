@@ -29,6 +29,7 @@ parser.add_argument("--config_path", type=str, required=False)
 parser.add_argument("--save_img_output", type=bool, default=False)
 parser.add_argument("--num_outputs_per_sample", type=int, default=1)
 parser.add_argument("--compute_metrics", type=bool, default=False)
+parser.add_argument("--batchsize", type=int, default=4)
 
 args = parser.parse_args()
 
@@ -75,8 +76,12 @@ class Inference():
         self.dtype = torch.float32
         self.unet.to(self.device, dtype=self.dtype)
         self.bridge_noise_sigma = self.cfg.lbm.bridge_noise_sigma
+        self.batchsize = args.batchsize
 
-        self.test_data_loader = get_i2i_3D_dataloader(self.test_csv_path, root_dir=self.cfg.data_dir, stage="test", batch_size=1)
+        self.test_data_loader = get_i2i_3D_dataloader(self.test_csv_path,
+                                                    root_dir=self.cfg.data_dir, 
+                                                    stage="test", 
+                                                    batch_size=self.batchsize)
 
         self.unet.eval()
         if self.use_ema:
@@ -159,89 +164,83 @@ class Inference():
     def get_min_max(self, x, y):
         return min(x.min(), y.min()), max(x.max(), y.max())
 
-    def update_metrics(self, decoded_sample, target_img):
+    def update_metrics(self, decoded_batch, target_batch):
         """
-        Accumulates statistics for metrics.
-        decoded_sample: (B, 1, D, H, W)
-        target_img: (B, 1, D, H, W)
+        decoded_batch: (B, 1, D, H, W)
+        target_batch: (B, 1, D, H, W)
         """
-        # Ensure data is normalized [0, 1] for metrics consistency
-        decoded_norm = self._normalize_min_max(decoded_sample)
-        target_norm = self._normalize_min_max(target_img)
-
-        # 1. SSIM (Can handle 5D input with torchmetrics if data_range is set)
-        # ssim_metric = structural_similarity(decoded_norm, target_norm)
-        # ssim_val = ssim_metric(decoded_norm, target_norm)
-        decoded_sample = decoded_sample.cpu().detach().numpy()
-        target_img = target_img.cpu().detach().numpy()
-        MIN, MAX = self.get_min_max(decoded_sample, target_img)
+        # 1. Distributional Metrics (FID handles batches natively)
+        decoded_norm = self._normalize_min_max(decoded_batch)
+        target_norm = self._normalize_min_max(target_batch)
         
-        ssim_val = structural_similarity(decoded_sample[0][0], target_img[0][0], data_range=MAX - MIN)
-        self.scores["ssim"].append(ssim_val)
-
-        # 2. PSNR
-        psnr_val = peak_signal_noise_ratio(decoded_sample[0][0], target_img[0][0], data_range=MAX - MIN)
-        self.scores["psnr"].append(psnr_val)
-
-        # Prepare for 2D-based metrics (LPIPS, FID)
-        # Flatten depth into batch dimension: (B*D, 3, H, W)
         decoded_2d = self._prepare_for_2d_metrics(decoded_norm)
         target_2d = self._prepare_for_2d_metrics(target_norm)
-
-        # 3. LPIPS (Calculated per slice pair, then averaged for the volume)
-        # LPIPS expects input in range [-1, 1] usually, but our logic passes [0, 1]. 
-        # lpips library handles normalization if configured, but VGG expects specific normalization.
-        # Standard approach: inputs in [-1, 1].
-        decoded_lpips_in = (decoded_2d * 2) - 1
-        target_lpips_in = (target_2d * 2) - 1
         
-        with torch.no_grad():
-            lpips_val = self.lpips_metric(decoded_lpips_in, target_lpips_in)
-        self.scores["lpips"].append(lpips_val.mean().item())
-
-        # 4. FID (Update state, don't compute yet)
-        # FID expects [0, 1] float (if normalize=True in init) or [0, 255] uint8.
-        # We initialized with normalize=True.
-        # Note: We treat every slice as an independent sample from the distribution.
         self.fid_metric.update(target_2d, real=True)
         self.fid_metric.update(decoded_2d, real=False)
 
+        # 2. Per-sample Metrics (Loop through the batch)
+        # LPIPS can handle batches natively
+        decoded_lpips_in = (decoded_2d * 2) - 1
+        target_lpips_in = (target_2d * 2) - 1
+        with torch.no_grad():
+            lpips_val = self.lpips_metric(decoded_lpips_in, target_lpips_in)
+            self.scores["lpips"].append(lpips_val.mean().item())
+
+        # SSIM and PSNR (Numpy based)
+        decoded_np = decoded_batch.cpu().detach().numpy()
+        target_np = target_batch.cpu().detach().numpy()
+
+        for b in range(decoded_np.shape[0]):
+            # Get 3D volumes: (D, H, W)
+            vol_pred = decoded_np[b, 0]
+            vol_true = target_np[b, 0]
+            
+            MIN, MAX = self.get_min_max(vol_pred, vol_true)
+            data_range = MAX - MIN if (MAX - MIN) > 0 else 1.0
+
+            s_val = structural_similarity(vol_pred, vol_true, data_range=data_range)
+            p_val = peak_signal_noise_ratio(vol_pred, vol_true, data_range=data_range)
+            
+            self.scores["ssim"].append(s_val)
+            self.scores["psnr"].append(p_val)
+
     def test(self):
-        print(f"Starting inference on {len(self.test_data_loader)} samples...")
+        print(f"Starting inference on {len(self.test_data_loader)} batches...")
         with torch.no_grad():
             for i, sample in enumerate(tqdm(self.test_data_loader)):
-                sample_id = sample['ID'][0] if isinstance(sample['ID'], list) else sample['ID']
-                if self.save_img_output:
-                    save_path = os.path.join(self.save_img_dir, sample_id)
-                    if not os.path.exists(save_path):
-                        os.makedirs(save_path)
-                    else:
-                        print(f"Save path {save_path} already exists")
-                        continue
-                    
+                # IDs are now a list of strings
+                sample_ids = sample['ID'] 
                 src_img = sample['A'].to(self.device, dtype=self.dtype)
+                curr_batch_size = src_img.shape[0]
                 
                 # Encode
-                if self.vae is not None:
-                    z = self.vae.encode_stage_2_inputs(src_img)
-                else:
-                    z = src_img
+                z = self.vae.encode_stage_2_inputs(src_img) if self.vae is not None else src_img
 
-                
-                
-                # Generate
-                # We assume batch_size=1 here based on loader
+                # Generate multiple outputs per sample
                 for j in range(self.num_outputs_per_sample):
-                    decoded_sample = self.sample(z, num_steps=self.num_inference_steps)
-                # Save Output
+                    decoded_batch = self.sample(z, num_steps=self.num_inference_steps)
+                    
+                    # Logic at saving: loop through the batch to save individual files
                     if self.save_img_output:
-                        np_sample = decoded_sample.cpu().detach().numpy()
-                        np.save(os.path.join(save_path, f"output_{j}.npy"), np_sample)
+                        for idx in range(curr_batch_size):
+                            sid = sample_ids[idx]
+                            save_path = os.path.join(self.save_img_dir, sid)
+                            os.makedirs(save_path, exist_ok=True)
 
+                            save_file_path = os.path.join(save_path, f"output_{j}.npy") 
+                            # if file already exists, skip
+                            if os.path.exists(save_file_path):
+                                print(f"File {save_file_path} already exists, skipping...")
+                                continue
+                            
+                            # Extract single sample from batch: (1, C, D, H, W)
+                            np_sample = decoded_batch[idx:idx+1].cpu().detach().numpy()
+                            np.save(save_file_path, np_sample)
                 # Compute Metrics (Accumulate)
                     if self.compute_metrics and j == 0:
                         target_img = sample['B'].to(self.device, dtype=self.dtype)
-                        self.update_metrics(decoded_sample, target_img)
+                        self.update_metrics(decoded_batch, target_img)
 
             # Finalize Metrics Calculation
             if self.compute_metrics:
