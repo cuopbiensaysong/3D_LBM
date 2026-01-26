@@ -104,7 +104,7 @@ log_text_file(f"CKPT path: {ckpt_path}", log_txt_file)
 
 
 for index, row in tqdm(test_df.iterrows(), total=test_df.shape[0]):
-    patient_dir = os.path.join(inference_dir, row['ID'])
+    patient_dir = os.path.join(inference_dir, 'images', row['ID'])
     
     # Check if dir exists before predicting
     if os.path.exists(patient_dir):

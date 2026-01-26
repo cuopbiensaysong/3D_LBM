@@ -2,22 +2,22 @@ train_csv_path: /home/user01/aiotlab/htien/5_folds_split_3D/fold_1_train.csv
 val_csv_path: /home/user01/aiotlab/htien/5_folds_split_3D/fold_1_val.csv
 data_dir: /home/user01/aiotlab/htien/Custom_LBM/data/filter_ds
 project_name: LBM
-run_name : "3D_LBM_uniform_noise0.005" 
+run_name: "3D_uniform_noise0.02"
 save_dir: /home/user01/aiotlab/htien/3D_LBM/3D_training/results
 
 pretrained_unet_path: /home/user01/aiotlab/htien/diffusion_model.pth
 vae_path: /home/user01/aiotlab/htien/vae_checkpoint.pth
 
-n_epochs : 200
-batch_size : 4
+n_epochs: 200
+batch_size: 4
 accumulate_grad_batches: 4 # tuning 
-num_workers : 4
-cache_rate : 1.0
-use_bfloat16 : True
+num_workers: 4
+cache_rate: 1.0
+use_bfloat16: True
 validation_interval: 1
 # resume_state_path: "/home/huutien/sources/GenerativeModels/3D_training/results/3D_training_KL_20251229_101810/best_checkpoint.pth"
 
-optimizer: 
+optimizer:
   beta1: 0.9
   lr: 0.0001
   optimizer: Adam
@@ -27,10 +27,9 @@ lr_scheduler:
   patience: 3000
   threshold: 0.0001
   cooldown: 3000
-  min_lr: 5.e-7
+  min_lr: 5e-7
 
-
-EMA: 
+EMA:
   ema_decay: 0.995
   start_ema_step: 4500
   update_ema_interval: 8
@@ -53,4 +52,4 @@ lbm:
   - 0.25
   - 0.25
   - 0.25
-  bridge_noise_sigma: 0.005
+  bridge_noise_sigma: 0.02

@@ -4,3 +4,12 @@ Initializing Metrics...
 Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
 Loading model from: /home/user01/miniconda3/envs/tiennh/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
 Starting inference on 100 samples...
+Computing final metrics...
+
+=== Final Evaluation Results ===
+SSIM: 0.8975
+PSNR: 31.2676
+LPIPS: 0.2014
+FID: 0.4851
+/home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.01_step200/images
+diversity: 0.003293924266472459

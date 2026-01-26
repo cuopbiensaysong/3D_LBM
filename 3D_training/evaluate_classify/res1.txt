@@ -1,0 +1,135 @@
+Starting Inference...
+Inference directory: /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step20
+Test CSV path: ./test_label_CN_pMCI.csv
+CKPT path: ./Classification-models/from_scratch_DenseNet121_train+val.pth
+
+============================================================
+               MEDICAL CLASSIFICATION REPORT                
+============================================================
+Metric                         | Value     
+------------------------------------------------------------
+Accuracy                       | 0.7895
+Balanced Accuracy              | 0.7723
+------------------------------------------------------------
+Sensitivity (Recall)           | 0.5769
+Specificity                    | 0.9677
+Precision (PPV)                | 0.9375
+NPV (Neg. Pred. Value)         | 0.7317
+------------------------------------------------------------
+F1 Score                       | 0.7143
+MCC (Matthews)                 | 0.6037
+Cohen Kappa                    | 0.5621
+------------------------------------------------------------
+ROC AUC                        | 0.8809
+PR AUC (AUPRC)                 | 0.8982
+============================================================
+
+Confusion Matrix:
+      Pred 0 (CN)   Pred 1 (AD)
+True 0   30            1         
+True 1   11            15        
+============================================================
+Evaluation completed successfully.
+****************************************************************************************************
+
+Starting Inference...
+Inference directory: /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.005_step200
+Test CSV path: ./test_label_CN_pMCI.csv
+CKPT path: ./Classification-models/from_scratch_DenseNet121_train+val.pth
+
+============================================================
+               MEDICAL CLASSIFICATION REPORT                
+============================================================
+Metric                         | Value     
+------------------------------------------------------------
+Accuracy                       | 0.7895
+Balanced Accuracy              | 0.7723
+------------------------------------------------------------
+Sensitivity (Recall)           | 0.5769
+Specificity                    | 0.9677
+Precision (PPV)                | 0.9375
+NPV (Neg. Pred. Value)         | 0.7317
+------------------------------------------------------------
+F1 Score                       | 0.7143
+MCC (Matthews)                 | 0.6037
+Cohen Kappa                    | 0.5621
+------------------------------------------------------------
+ROC AUC                        | 0.8908
+PR AUC (AUPRC)                 | 0.8887
+============================================================
+
+Confusion Matrix:
+      Pred 0 (CN)   Pred 1 (AD)
+True 0   30            1         
+True 1   11            15        
+============================================================
+Evaluation completed successfully.
+****************************************************************************************************
+
+Starting Inference...
+Inference directory: /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.01_step20
+Test CSV path: ./test_label_CN_pMCI.csv
+CKPT path: ./Classification-models/from_scratch_DenseNet121_train+val.pth
+
+============================================================
+               MEDICAL CLASSIFICATION REPORT                
+============================================================
+Metric                         | Value     
+------------------------------------------------------------
+Accuracy                       | 0.8070
+Balanced Accuracy              | 0.7885
+------------------------------------------------------------
+Sensitivity (Recall)           | 0.5769
+Specificity                    | 1.0000
+Precision (PPV)                | 1.0000
+NPV (Neg. Pred. Value)         | 0.7381
+------------------------------------------------------------
+F1 Score                       | 0.7317
+MCC (Matthews)                 | 0.6526
+Cohen Kappa                    | 0.5973
+------------------------------------------------------------
+ROC AUC                        | 0.9045
+PR AUC (AUPRC)                 | 0.9180
+============================================================
+
+Confusion Matrix:
+      Pred 0 (CN)   Pred 1 (AD)
+True 0   31            0         
+True 1   11            15        
+============================================================
+Evaluation completed successfully.
+****************************************************************************************************
+
+Starting Inference...
+Inference directory: /home/user01/aiotlab/htien/3D_LBM/3D_training/results/inferences/3D_LBM_uniform_noise0.01_step200
+Test CSV path: ./test_label_CN_pMCI.csv
+CKPT path: ./Classification-models/from_scratch_DenseNet121_train+val.pth
+
+============================================================
+               MEDICAL CLASSIFICATION REPORT                
+============================================================
+Metric                         | Value     
+------------------------------------------------------------
+Accuracy                       | 0.8246
+Balanced Accuracy              | 0.8077
+------------------------------------------------------------
+Sensitivity (Recall)           | 0.6154
+Specificity                    | 1.0000
+Precision (PPV)                | 1.0000
+NPV (Neg. Pred. Value)         | 0.7561
+------------------------------------------------------------
+F1 Score                       | 0.7619
+MCC (Matthews)                 | 0.6821
+Cohen Kappa                    | 0.6351
+------------------------------------------------------------
+ROC AUC                        | 0.9045
+PR AUC (AUPRC)                 | 0.9190
+============================================================
+
+Confusion Matrix:
+      Pred 0 (CN)   Pred 1 (AD)
+True 0   31            0         
+True 1   10            16        
+============================================================
+Evaluation completed successfully.
+****************************************************************************************************

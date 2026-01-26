@@ -15,12 +15,11 @@ from data_3D_loader import get_i2i_3D_dataloader_for_inference
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--train_csv_path", type=str, default=None)
-parser.add_argument("--npy_path", type=str, default=None)
+parser.add_argument("--train_csv_path", type=str, default='./data/fold_1_train_balanced.csv')
 parser.add_argument("--output_dir", type=str, required=True)
-parser.add_argument("--num_inference_steps", type=int, default=1)
+parser.add_argument("--num_inference_steps", type=int, default=20)
 parser.add_argument("--ckpt_path", type=str, required=True)
-parser.add_argument("--config_path", type=str, required=False)
+parser.add_argument("--config_path", type=str, required=True)
 parser.add_argument("--num_outputs_per_sample", type=int, default=1)
 
 
@@ -34,7 +33,6 @@ class Inference():
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.train_csv_path = args.train_csv_path
-        self.npy_path = args.npy_path
 
         self.output_dir = args.output_dir
         os.makedirs(os.path.join(self.output_dir, "AD"), exist_ok=True)
@@ -248,5 +246,5 @@ class Inference():
 
 if __name__ == "__main__":
     inference = Inference(args)
-    inference.test()
+    inference.infer()
     

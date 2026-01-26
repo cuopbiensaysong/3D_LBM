@@ -205,7 +205,6 @@ def get_i2i_3D_dataloader_for_inference(csv_path, stage='train', root_dir="./", 
             "A": os.path.join(root_dir, row["img_path_A"].strip()),
         }
         try: 
-            data_sample["ID"] = row["ID"]
             data_sample["label"] = row["DX_B"]
             data_sample["subject_id"] = row["subject ID"]
         except:
